@@ -1,0 +1,19 @@
+﻿<div id='divLoginButton'>
+    <a href='javascript:showLogonDialog();'>Log On</a>
+    <div id='divLogon'>
+    </div>
+</div>
+<script type="text/javascript">
+    function showLogonDialog() {
+        if( $("#dlgLogin").length == 0 ){
+            // ajax load
+            $('#divLogon').load("@Url.Action("OpenLogin", "Pop")");
+        } else {
+            // clear username & password fields
+            $('#username,#password').val('');
+
+            // reopen the login dialog which was previously rendered
+            $("#dlgLogin").dialog("open");
+        }
+    }
+</script>

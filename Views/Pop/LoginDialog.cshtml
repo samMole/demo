@@ -1,0 +1,63 @@
+﻿<div id="dlgLogin">
+    <h1>
+        Log in</h1>
+    <table>
+        <tr>
+            <td>
+                Username:
+            </td>
+            <td>@Html.TextBox("username")
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Password:
+            </td>
+            <td>@Html.Password("password")
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @Html.ActionLink("Report", "DownloadReport", new { id = 1 }, new { @class = "report" })
+            </td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $(document).on("click", "a.report", function () {
+            $.fileDownload($(this).prop('href'), {
+                preparingMessageHtml: "We are preparing your report, please wait...",
+            });
+            return false; //this is critical to stop the click event which will trigger a normal file download!
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#dlgLogin").dialog({
+            modal: true,
+            autoOpen: true,
+            resizable: false,
+            buttons: {
+                Login: function () {
+                    // perform login
+                    $.post("@Url.Action("Login", "Pop")",
+				    {
+					    username: $('#username').val(),
+                        password: $('#password').val()
+				    },
+				    function( data, status, xhr ) {
+                        if(data.Success){
+                        } else {
+                            // do something else
+                        }
+				    });
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+</script>

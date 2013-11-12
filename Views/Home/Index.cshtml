@@ -1,0 +1,91 @@
+﻿@model demoGrid.Models.HomeModel
+@using demoGrid.GridHelper
+@using demoGrid.HtmlExtension
+<div id="homePage">
+    <div class="roundCorner" style="display: none;">
+        Dialog Title
+    </div>
+    <div>
+        @Html.DialogFormLink("Edit", Url.Action("EditPopUp"), "Edit Record", "ProfileContainer", Url.Action("Index"))
+    </div>
+    <br />
+    @(Html.jqGrid("GridMain")
+    .addColumn(new Column("AccountNumber").setLabel("Account#")
+        .setSortable(true)
+        .setWidth(50))
+    .addColumn(new Column("AccountText").setLabel("TextBox")
+        .setEditType(EditType.text).setSortable(true)
+        .setEditable(true).setHidden(true)
+        .setWidth(80))
+    .addColumn(new Column("AccountDropdown").setLabel("Dropdown")
+            .setEditType(EditType.select).setSortable(true)
+        .setEditOptions("value: $('#GridSelect').val()")
+        .setEditRules("required: true")
+        .setEditable(true)
+        .setWidth(60))
+    .addColumn(new Column("AccountDate").setLabel("Date")
+        .setDateFmt("m/d/yyyy")
+        .setEditOptions("dataInit: function (elem) { $(elem).datepicker(); }")
+        .setEditRules("date: true")
+        .setEditable(true)
+        .setSortable(true)
+        .setWidth(50))
+    .addColumn(new Column("AccountType")
+        .setLabel("Type")
+        .setEditType(EditType.checkbox)
+        .setEditOptions("value: 'Yes:No'")
+        .setEditable(true)
+        .setWidth(20))
+    .addColumn(new Column("AccountBalance").setLabel("Balance")
+        .setWidth(50))
+
+
+    // settings
+    .setCaption("Account")
+    .setRequestType(RequestType.get)
+    .setUrl("~/Home/GetAccountList/")
+    .setAltRows(true)
+    .setAltClass("altGridRows")
+    .setAutoWidth(true)
+    .setRowNum(10)
+    .setRowList(new int[] { 10, 15, 20, 50 })
+    .setViewRecords(true)
+    .setSortName("AccountNumber")
+    .setSortOrder(SortOrder.asc)
+    .setPgButtons(true)
+    .setCellEdit(true)
+    .setCellSubmit(CellSubmit.clientArray)
+    .setTopPager(true)
+    .Render()
+)
+    <br />
+    <input type="button" id="btnSubmitGrid" value="Submit Grid" class="button" />
+    @Html.HiddenFor(m => m.GridSelect)
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmMain" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.GridData)
+    }
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#btnSubmitGrid").click(function () {
+            // The following jsonizes and sends all of the current data in the grid. This sample uses
+            //   cellsubmit = clientArray which saves the modified cell data back into the grid and does not fire any
+            //   events - all of the modified and unmodified grid data is only sent when the data is submitted.
+            //   If you want to send only the selected rows or a subset of the grid fields, then more logic is required
+
+            // Note: the getRowData method does not return the id of the row, only the data - other methods to retrieve the data can be used here instead
+            var gridData = $('#GridMain').getRowData();
+            var postData = JSON.stringify(gridData);
+
+            $("#GridData").val(postData);
+            $("#frmMain").submit();
+        });
+    });
+</script>
+<style type="text/css">
+.ui-dialog .ui-dialog-buttonpane {
+    border-width: 0;
+}
+</style>
